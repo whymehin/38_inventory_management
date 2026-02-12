@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聖若瑟教區中學95周年科普與文創展 - 庫存管理系統</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-brown: #8B7355;
+            --light-beige: #F5F5DC;
+            --medium-beige: #E6D5B8;
+            --dark-beige: #D4B996;
+            --accent-green: #556B2F;
+            --accent-red: #B22222;
+            --accent-blue: #4682B4;
+            --text-dark: #4A3C31;
+            --text-light: #FFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-beige);
+            color: var(--text-dark);
+            line-height: 1.6;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4b996' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        header {
+            background-color: var(--primary-brown);
+            color: var(--text-light);
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-green);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-container i {
+            font-size: 2.5rem;
+            color: var(--light-beige);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: var(--medium-beige);
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+            border-bottom: 2px solid var(--primary-brown);
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border-right: 1px solid var(--dark-beige);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab:last-child {
+            border-right: none;
+        }
+        
+        .tab:hover {
+            background-color: var(--dark-beige);
+        }
+        
+        .tab.active {
+            background-color: var(--light-beige);
+            color: var(--primary-brown);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            background-color: var(--light-beige);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            min-height: 600px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 工具欄樣式 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--dark-beige);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-green);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #445a24;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #3a6da0;
+            transform: translateY(-2px);
+        }
+        
+        .btn-export {
+            background-color: var(--primary-brown);
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background-color: #7a6347;
+            transform: translateY(-2px);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        /* 表格樣式 */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--dark-beige);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: var(--primary-brown);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            border-right: 1px solid var(--dark-beige);
+        }
+        
+        th:last-child {
+            border-right: none;
+        }
+        
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--dark-beige);
+            border-right: 1px solid var(--dark-beige);
+            text-align: center;
+        }
+        
+        td:last-child {
+            border-right: none;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(244, 240, 230, 0.5);
+        }
+        
+        tr:hover {
+            background-color: rgba(212, 185, 150, 0.2);
+        }
+        
+        .category-header {
+            background-color: var(--accent-green);
+            color: white;
+            font-size: 1.2rem;
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        .category-header td {
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--dark-beige);
+            border-radius: 4px;
+            text-align: center;
+            background-color: white;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(70, 130, 180, 0.2);
+        }
+        
+        .remaining-cell {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+        
+        .total-sales-cell {
+            font-weight: bold;
+            color: var(--accent-red);
+        }
+        
+        /* 圖表區域樣式 */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .chart-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--dark-beige);
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            color: var(--primary-brown);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--medium-beige);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-container {
+            height: 350px;
+            position: relative;
+        }
+        
+        /* 響應式設計 */
+        @media (max-width: 1100px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                justify-content: center;
+                border-right: none;
+                border-bottom: 1px solid var(--dark-beige);
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--dark-beige);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            background-color: var(--accent-green);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .presale-row {
+            background-color: rgba(139, 115, 85, 0.1);
+        }
+        
+        .presale-label {
+            color: var(--accent-blue);
+            font-style: italic;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-green);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <i class="fas fa-school"></i>
+            <div>
+                <h1>聖若瑟教區中學95周年科普與文創展</h1>
+                <p class="subtitle">庫存管理系統</p>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="data-entry">
+                <i class="fas fa-edit"></i>
+                數據輸入
+            </div>
+            <div class="tab" data-tab="infographics">
+                <i class="fas fa-chart-bar"></i>
+                數據圖表
+            </div>
+            <div class="tab" data-tab="import-export">
+                <i class="fas fa-file-export"></i>
+                導入/導出
+            </div>
+        </div>
+        
+        <!-- 數據輸入頁面 -->
+        <div id="data-entry" class="tab-content active">
+            <div class="toolbar">
+                <div>
+                    <h2><i class="fas fa-boxes"></i> 庫存管理</h2>
+                    <p>輸入每個時段的銷售數據，系統會自動計算剩餘庫存</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="update-all">
+                        <i class="fas fa-calculator"></i> 更新所有計算
+                    </button>
+                    <button class="btn btn-secondary" id="reset-data">
+                        <i class="fas fa-redo"></i> 重置數據
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">編號</th>
+                            <th rowspan="2">產品</th>
+                            <th rowspan="2">初始數量</th>
+                            <th colspan="2">13:00 – 14:30</th>
+                            <th colspan="2">14:30 – 16:00</th>
+                            <th colspan="2">16:00 – 17:00</th>
+                            <th rowspan="2">售出總數</th>
+                        </tr>
+                        <tr>
+                            <th>售出</th>
+                            <th>剩餘數量</th>
+                            <th>售出</th>
+                            <th>剩餘數量</th>
+                            <th>售出</th>
+                            <th>剩餘數量</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- 數據將由JavaScript動態生成 -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background-color: rgba(212, 185, 150, 0.2); border-radius: 8px;">
+                <h3><i class="fas fa-info-circle"></i> 使用說明</h3>
+                <p>1. 在「售出」欄位輸入每個時段的銷售數量，系統會自動計算剩餘庫存和總銷售量</p>
+                <p>2. 預售商品（標有 *）只有銷售欄位可輸入，沒有初始庫存</p>
+                <p>3. 點擊「更新所有計算」按鈕可以重新計算所有商品的庫存</p>
+                <p>4. 使用「重置數據」按鈕可以將所有銷售數據歸零</p>
+            </div>
+        </div>
+        
+        <!-- 數據圖表頁面 -->
+        <div id="infographics" class="tab-content">
+            <div class="toolbar">
+                <div>
+                    <h2><i class="fas fa-chart-pie"></i> 銷售數據圖表</h2>
+                    <p>視覺化展示各類商品的銷售情況和庫存狀態</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="refresh-charts">
+                        <i class="fas fa-sync-alt"></i> 刷新圖表
+                    </button>
+                    <select id="chart-filter" class="btn" style="background-color: white; color: var(--text-dark); border: 1px solid var(--dark-beige);">
+                        <option value="all">顯示所有商品</option>
+                        <option value="primary">只顯示中/小學部商品</option>
+                        <option value="kindergarten">只顯示幼稚園商品</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-chart-line"></i> 銷售排行榜</h3>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-box-open"></i> 庫存狀態</h3>
+                    <div class="chart-container">
+                        <canvas id="inventoryChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-clock"></i> 時段銷售分析</h3>
+                    <div class="chart-container">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-percentage"></i> 銷售比例</h3>
+                    <div class="chart-container">
+                        <canvas id="percentageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 導入/導出頁面 -->
+        <div id="import-export" class="tab-content">
+            <div class="toolbar">
+                <div>
+                    <h2><i class="fas fa-database"></i> 數據導入與導出</h2>
+                    <p>將庫存數據導入系統或導出為Excel文件</p>
+                </div>
+            </div>
+            
+            <div class="progress-bar" id="import-progress">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-file-import"></i> 導入數據</h3>
+                    <div style="padding: 20px;">
+                        <p>選擇Excel文件導入銷售數據。文件格式應與導出格式一致。</p>
+                        <div class="file-input-wrapper" style="margin: 25px 0;">
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-upload"></i> 選擇Excel文件
+                            </button>
+                            <input type="file" id="excel-import" accept=".xlsx, .xls, .csv">
+                        </div>
+                        <p>或直接將文件拖放到此區域：</p>
+                        <div id="drop-area" style="border: 2px dashed var(--dark-beige); border-radius: 8px; padding: 40px; text-align: center; margin-top: 15px; background-color: rgba(212, 185, 150, 0.1);">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-brown); margin-bottom: 15px;"></i>
+                            <p>拖放Excel文件到此處</p>
+                            <p style="font-size: 0.9rem; color: #777;">支持 .xlsx, .xls, .csv 格式</p>
+                        </div>
+                        <div style="margin-top: 25px; padding: 15px; background-color: rgba(139, 115, 85, 0.1); border-radius: 8px;">
+                            <h4><i class="fas fa-lightbulb"></i> 導入提示</h4>
+                            <p>1. 確保導入的文件包含所有必要的欄位</p>
+                            <p>2. 導入後系統會自動計算庫存和銷售總數</p>
+                            <p>3. 現有數據將被新數據覆蓋，請謹慎操作</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title"><i class="fas fa-file-export"></i> 導出數據</h3>
+                    <div style="padding: 20px;">
+                        <p>將當前庫存和銷售數據導出為Excel文件，便於存檔和分享。</p>
+                        <button class="btn btn-export" id="export-excel" style="width: 100%; padding: 15px; margin: 25px 0;">
+                            <i class="fas fa-download"></i> 導出為Excel文件
+                        </button>
+                        <div style="margin-top: 30px; padding: 15px; background-color: rgba(85, 107, 47, 0.1); border-radius: 8px;">
+                            <h4><i class="fas fa-history"></i> 數據備份</h4>
+                            <p>系統會自動保存您的最近操作，但建議定期導出數據以備份。</p>
+                            <p>最後保存時間: <span id="last-save-time">從未保存</span></p>
+                        </div>
+                        <div style="margin-top: 25px;">
+                            <h4><i class="fas fa-cog"></i> 導出選項</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                                <label>
+                                    <input type="checkbox" id="include-calculations" checked> 包含計算公式
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="include-charts" checked> 包含圖表摘要
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="formatting" checked> 保留格式設置
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification">操作成功！</div>
+    
+    <footer>
+        <p>聖若瑟教區中學95周年科普與文創展 庫存管理系統 &copy; 2026</p>
+        <p>設計: whymehin w/ DeepSeek </p>
+    </footer>
+
+    <script>
+        // 原始數據 - 來自Excel文件
+        const initialData = {
+            "primary": [
+                { id: 1, name: "文創羊", initial: 100, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 2, name: "水中之子", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 3, name: "水中之子明信片", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 4, name: "便利貼", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 5, name: "香薰石膏掛件", initial: 50, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 6, name: "收納小包", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 7, name: "A4 文件夾套裝", initial: 50, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 8, name: "鎖匙扣", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 9, name: "帆布袋", initial: 100, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 10, name: "毛巾", initial: 100, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 11, name: "星花掛飾", initial: 20, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 12, name: "馬賽克杯墊", initial: 35, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 13, name: "*聖中隨身杯 (預售)", initial: null, sales1: 0, sales2: 0, sales3: 0, presale: true },
+                { id: 14, name: "*聖中雨傘 (預售)", initial: null, sales1: 0, sales2: 0, sales3: 0, presale: true },
+                { id: 15, name: "*布藝掛件 (一套) (預售)", initial: null, sales1: 0, sales2: 0, sales3: 0, presale: true }
+            ],
+            "kindergarten": [
+                { id: 1, name: "我是主的羊毛公仔", initial: 20, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 2, name: "學生校慶創作環保袋", initial: 8, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 3, name: "貼紙（一套四款）", initial: 8, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 4, name: "大環保袋", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 5, name: "一至四校校部圖案Memo紙", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 6, name: "一至四校校部圖案夾子", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 7, name: "CDSJ手機掛飾", initial: 10, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 8, name: "天主的小羊掛件", initial: 30, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 9, name: "念珠", initial: 50, sales1: 0, sales2: 0, sales3: 0 },
+                { id: 10, name: "公文夾", initial: 250, sales1: 0, sales2: 0, sales3: 0 }
+            ]
+        };
+
+        // 複製初始數據作為當前數據
+        let currentData = JSON.parse(JSON.stringify(initialData));
+        
+        // 圖表實例
+        let salesChart, inventoryChart, timeChart, percentageChart;
+        
+        // DOM加載完成後初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化頁面
+            initTable();
+            initCharts();
+            setupEventListeners();
+            showNotification('系統已就緒！', 'success');
+            
+            // 設置最後保存時間
+            document.getElementById('last-save-time').textContent = new Date().toLocaleString('zh-Hant');
+        });
+        
+        // 初始化表格
+        function initTable() {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            
+            // 添加中/小學部商品
+            tableBody.innerHTML += `
+                <tr class="category-header">
+                    <td colspan="10"><i class="fas fa-graduation-cap"></i> 中/小學部商品</td>
+                </tr>
+            `;
+            
+            currentData.primary.forEach(item => {
+                const remaining1 = item.initial !== null ? item.initial - item.sales1 : '-';
+                const remaining2 = item.initial !== null ? remaining1 - item.sales2 : '-';
+                const remaining3 = item.initial !== null ? remaining2 - item.sales3 : '-';
+                const totalSales = item.sales1 + item.sales2 + item.sales3;
+                
+                const rowClass = item.presale ? 'presale-row' : '';
+                
+                tableBody.innerHTML += `
+                    <tr class="${rowClass}" data-category="primary" data-id="${item.id}">
+                        <td>${item.id}.</td>
+                        <td class="${item.presale ? 'presale-label' : ''}">${item.name}</td>
+                        <td>${item.initial !== null ? item.initial : '-'}</td>
+                        <td><input type="number" min="0" value="${item.sales1}" class="sales-input" data-period="1"></td>
+                        <td class="remaining-cell">${remaining1}</td>
+                        <td><input type="number" min="0" value="${item.sales2}" class="sales-input" data-period="2"></td>
+                        <td class="remaining-cell">${remaining2}</td>
+                        <td><input type="number" min="0" value="${item.sales3}" class="sales-input" data-period="3"></td>
+                        <td class="remaining-cell">${remaining3}</td>
+                        <td class="total-sales-cell">${totalSales}</td>
+                    </tr>
+                `;
+            });
+            
+            // 添加幼稚園商品
+            tableBody.innerHTML += `
+                <tr class="category-header">
+                    <td colspan="10"><i class="fas fa-child"></i> 幼稚園商品</td>
+                </tr>
+            `;
+            
+            currentData.kindergarten.forEach(item => {
+                const remaining1 = item.initial - item.sales1;
+                const remaining2 = remaining1 - item.sales2;
+                const remaining3 = remaining2 - item.sales3;
+                const totalSales = item.sales1 + item.sales2 + item.sales3;
+                
+                tableBody.innerHTML += `
+                    <tr data-category="kindergarten" data-id="${item.id}">
+                        <td>${item.id}.</td>
+                        <td>${item.name}</td>
+                        <td>${item.initial}</td>
+                        <td><input type="number" min="0" value="${item.sales1}" class="sales-input" data-period="1"></td>
+                        <td class="remaining-cell">${remaining1}</td>
+                        <td><input type="number" min="0" value="${item.sales2}" class="sales-input" data-period="2"></td>
+                        <td class="remaining-cell">${remaining2}</td>
+                        <td><input type="number" min="0" value="${item.sales3}" class="sales-input" data-period="3"></td>
+                        <td class="remaining-cell">${remaining3}</td>
+                        <td class="total-sales-cell">${totalSales}</td>
+                    </tr>
+                `;
+            });
+            
+            // 添加事件監聽器到輸入框
+            document.querySelectorAll('.sales-input').forEach(input => {
+                input.addEventListener('change', handleSalesInput);
+                input.addEventListener('input', handleSalesInput);
+            });
+        }
+        
+        // 處理銷售輸入
+        function handleSalesInput(e) {
+            const input = e.target;
+            const row = input.closest('tr');
+            const category = row.dataset.category;
+            const id = parseInt(row.dataset.id);
+            const period = parseInt(input.dataset.period);
+            const value = parseInt(input.value) || 0;
+            
+            // 更新數據
+            const itemIndex = currentData[category].findIndex(item => item.id === id);
+            if (itemIndex !== -1) {
+                if (period === 1) currentData[category][itemIndex].sales1 = value;
+                if (period === 2) currentData[category][itemIndex].sales2 = value;
+                if (period === 3) currentData[category][itemIndex].sales3 = value;
+            }
+            
+            // 更新該行的計算
+            updateRowCalculations(row, category, id);
+            
+            // 更新圖表
+            updateCharts();
+            
+            // 顯示通知
+            showNotification('數據已更新', 'info');
+            
+            // 更新最後保存時間
+            document.getElementById('last-save-time').textContent = new Date().toLocaleString('zh-Hant');
+        }
+        
+        // 更新行計算
+        function updateRowCalculations(row, category, id) {
+            const itemIndex = currentData[category].findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+            
+            const item = currentData[category][itemIndex];
+            
+            // 計算剩餘和總銷售
+            let remaining1, remaining2, remaining3;
+            if (item.initial !== null) {
+                remaining1 = item.initial - item.sales1;
+                remaining2 = remaining1 - item.sales2;
+                remaining3 = remaining2 - item.sales3;
+            } else {
+                remaining1 = '-';
+                remaining2 = '-';
+                remaining3 = '-';
+            }
+            
+            const totalSales = item.sales1 + item.sales2 + item.sales3;
+            
+            // 更新表格單元格
+            const cells = row.querySelectorAll('td');
+            cells[4].textContent = remaining1; // 剩餘1
+            cells[6].textContent = remaining2; // 剩餘2
+            cells[8].textContent = remaining3; // 剩餘3
+            cells[9].textContent = totalSales; // 總銷售
+        }
+        
+        // 更新所有計算
+        function updateAllCalculations() {
+            const rows = document.querySelectorAll('#table-body tr[data-category]');
+            rows.forEach(row => {
+                const category = row.dataset.category;
+                const id = parseInt(row.dataset.id);
+                updateRowCalculations(row, category, id);
+            });
+            
+            showNotification('所有計算已更新', 'success');
+        }
+        
+        // 重置數據
+        function resetData() {
+            if (confirm('確定要重置所有銷售數據嗎？這將清除所有已輸入的銷售數據。')) {
+                currentData = JSON.parse(JSON.stringify(initialData));
+                initTable();
+                updateCharts();
+                showNotification('數據已重置', 'success');
+            }
+        }
+        
+        // 初始化圖表
+        function initCharts() {
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+            const timeCtx = document.getElementById('timeChart').getContext('2d');
+            const percentageCtx = document.getElementById('percentageChart').getContext('2d');
+            
+            // 銷售排行榜圖表
+            salesChart = new Chart(salesCtx, {
+                type: 'bar',
+                data: getSalesChartData(),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: '銷售數量' } }
+                    }
+                }
+            });
+            
+            // 庫存狀態圖表
+            inventoryChart = new Chart(inventoryCtx, {
+                type: 'doughnut',
+                data: getInventoryChartData(),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+            
+            // 時段銷售分析圖表
+            timeChart = new Chart(timeCtx, {
+                type: 'line',
+                data: getTimeChartData(),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: '銷售數量' } }
+                    }
+                }
+            });
+            
+            // 銷售比例圖表
+            percentageChart = new Chart(percentageCtx, {
+                type: 'pie',
+                data: getPercentageChartData(),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+        }
+        
+        // 獲取銷售圖表數據
+        function getSalesChartData() {
+            // 合併所有商品
+            const allItems = [...currentData.primary, ...currentData.kindergarten];
+            
+            // 按總銷售量排序
+            const sortedItems = allItems
+                .map(item => ({
+                    name: item.name,
+                    total: item.sales1 + item.sales2 + item.sales3
+                }))
+                .sort((a, b) => b.total - a.total)
+                .slice(0, 10); // 只取前10名
+            
+            return {
+                labels: sortedItems.map(item => item.name.length > 12 ? item.name.substring(0, 12) + '...' : item.name),
+                datasets: [{
+                    label: '銷售數量',
+                    data: sortedItems.map(item => item.total),
+                    backgroundColor: [
+                        'rgba(139, 115, 85, 0.7)',
+                        'rgba(85, 107, 47, 0.7)',
+                        'rgba(212, 185, 150, 0.7)',
+                        'rgba(178, 34, 34, 0.7)',
+                        'rgba(70, 130, 180, 0.7)',
+                        'rgba(143, 188, 143, 0.7)',
+                        'rgba(210, 180, 140, 0.7)',
+                        'rgba(139, 69, 19, 0.7)',
+                        'rgba(184, 134, 11, 0.7)',
+                        'rgba(85, 107, 47, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgb(139, 115, 85)',
+                        'rgb(85, 107, 47)',
+                        'rgb(212, 185, 150)',
+                        'rgb(178, 34, 34)',
+                        'rgb(70, 130, 180)',
+                        'rgb(143, 188, 143)',
+                        'rgb(210, 180, 140)',
+                        'rgb(139, 69, 19)',
+                        'rgb(184, 134, 11)',
+                        'rgb(85, 107, 47)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+        }
+        
+        // 獲取庫存圖表數據
+        function getInventoryChartData() {
+            let primaryRemaining = 0;
+            let primaryInitial = 0;
+            let kindergartenRemaining = 0;
+            let kindergartenInitial = 0;
+            
+            // 計算中/小學部
+            currentData.primary.forEach(item => {
+                if (item.initial !== null) {
+                    primaryInitial += item.initial;
+                    const remaining = item.initial - (item.sales1 + item.sales2 + item.sales3);
+                    primaryRemaining += remaining > 0 ? remaining : 0;
+                }
+            });
+            
+            // 計算幼稚園
+            currentData.kindergarten.forEach(item => {
+                kindergartenInitial += item.initial;
+                const remaining = item.initial - (item.sales1 + item.sales2 + item.sales3);
+                kindergartenRemaining += remaining > 0 ? remaining : 0;
+            });
+            
+            const primarySold = primaryInitial - primaryRemaining;
+            const kindergartenSold = kindergartenInitial - kindergartenRemaining;
+            
+            return {
+                labels: ['中/小學部剩餘', '中/小學部已售', '幼稚園剩餘', '幼稚園已售'],
+                datasets: [{
+                    data: [primaryRemaining, primarySold, kindergartenRemaining, kindergartenSold],
+                    backgroundColor: [
+                        'rgba(139, 115, 85, 0.7)',
+                        'rgba(139, 115, 85, 0.4)',
+                        'rgba(85, 107, 47, 0.7)',
+                        'rgba(85, 107, 47, 0.4)'
+                    ],
+                    borderColor: [
+                        'rgb(139, 115, 85)',
+                        'rgb(139, 115, 85)',
+                        'rgb(85, 107, 47)',
+                        'rgb(85, 107, 47)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+        }
+        
+        // 獲取時段圖表數據
+        function getTimeChartData() {
+            let period1Sales = 0;
+            let period2Sales = 0;
+            let period3Sales = 0;
+            
+            // 計算各時段銷售總量
+            [...currentData.primary, ...currentData.kindergarten].forEach(item => {
+                period1Sales += item.sales1;
+                period2Sales += item.sales2;
+                period3Sales += item.sales3;
+            });
+            
+            return {
+                labels: ['13:00-14:30', '14:30-16:00', '16:00-17:00'],
+                datasets: [
+                    {
+                        label: '中/小學部',
+                        data: [
+                            currentData.primary.reduce((sum, item) => sum + item.sales1, 0),
+                            currentData.primary.reduce((sum, item) => sum + item.sales2, 0),
+                            currentData.primary.reduce((sum, item) => sum + item.sales3, 0)
+                        ],
+                        borderColor: 'rgb(139, 115, 85)',
+                        backgroundColor: 'rgba(139, 115, 85, 0.1)',
+                        tension: 0.3
+                    },
+                    {
+                        label: '幼稚園',
+                        data: [
+                            currentData.kindergarten.reduce((sum, item) => sum + item.sales1, 0),
+                            currentData.kindergarten.reduce((sum, item) => sum + item.sales2, 0),
+                            currentData.kindergarten.reduce((sum, item) => sum + item.sales3, 0)
+                        ],
+                        borderColor: 'rgb(85, 107, 47)',
+                        backgroundColor: 'rgba(85, 107, 47, 0.1)',
+                        tension: 0.3
+                    }
+                ]
+            };
+        }
+        
+        // 獲取比例圖表數據
+        function getPercentageChartData() {
+            // 計算銷售比例
+            const allItems = [...currentData.primary, ...currentData.kindergarten];
+            const categorySales = {
+                '文創商品': 0,
+                '文具用品': 0,
+                '生活用品': 0,
+                '預售商品': 0
+            };
+            
+            allItems.forEach(item => {
+                const total = item.sales1 + item.sales2 + item.sales3;
+                
+                if (item.presale) {
+                    categorySales['預售商品'] += total;
+                } else if (item.name.includes('公仔') || item.name.includes('掛飾') || item.name.includes('掛件')) {
+                    categorySales['文創商品'] += total;
+                } else if (item.name.includes('貼紙') || item.name.includes('夾子') || item.name.includes('文件夾') || item.name.includes('Memo紙') || item.name.includes('明信片')) {
+                    categorySales['文具用品'] += total;
+                } else {
+                    categorySales['生活用品'] += total;
+                }
+            });
+            
+            const labels = [];
+            const data = [];
+            const backgroundColors = [];
+            
+            Object.entries(categorySales).forEach(([category, sales], index) => {
+                if (sales > 0) {
+                    labels.push(category);
+                    data.push(sales);
+                    
+                    // 根據類別分配顏色
+                    const colors = [
+                        'rgba(139, 115, 85, 0.7)',
+                        'rgba(85, 107, 47, 0.7)',
+                        'rgba(212, 185, 150, 0.7)',
+                        'rgba(70, 130, 180, 0.7)'
+                    ];
+                    backgroundColors.push(colors[index % colors.length]);
+                }
+            });
+            
+            return {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            };
+        }
+        
+        // 更新圖表
+        function updateCharts() {
+            salesChart.data = getSalesChartData();
+            salesChart.update();
+            
+            inventoryChart.data = getInventoryChartData();
+            inventoryChart.update();
+            
+            timeChart.data = getTimeChartData();
+            timeChart.update();
+            
+            percentageChart.data = getPercentageChartData();
+            percentageChart.update();
+        }
+        
+        // 設置事件監聽器
+        function setupEventListeners() {
+            // 頁籤切換
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // 更新活動頁籤
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新活動內容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // 如果是圖表頁籤，更新圖表
+                    if (tabId === 'infographics') {
+                        updateCharts();
+                    }
+                });
+            });
+            
+            // 更新所有計算按鈕
+            document.getElementById('update-all').addEventListener('click', updateAllCalculations);
+            
+            // 重置數據按鈕
+            document.getElementById('reset-data').addEventListener('click', resetData);
+            
+            // 刷新圖表按鈕
+            document.getElementById('refresh-charts').addEventListener('click', function() {
+                updateCharts();
+                showNotification('圖表已刷新', 'success');
+            });
+            
+            // 圖表篩選器
+            document.getElementById('chart-filter').addEventListener('change', function() {
+                // 這裡可以實現篩選邏輯
+                updateCharts();
+            });
+            
+            // 導出Excel
+            document.getElementById('export-excel').addEventListener('click', exportToExcel);
+            
+            // 導入Excel
+            document.getElementById('excel-import').addEventListener('change', importFromExcel);
+            
+            // 拖放區域
+            const dropArea = document.getElementById('drop-area');
+            dropArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropArea.style.backgroundColor = 'rgba(212, 185, 150, 0.3)';
+                dropArea.style.borderColor = 'var(--accent-green)';
+            });
+            
+            dropArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                dropArea.style.backgroundColor = 'rgba(212, 185, 150, 0.1)';
+                dropArea.style.borderColor = 'var(--dark-beige)';
+            });
+            
+            dropArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropArea.style.backgroundColor = 'rgba(212, 185, 150, 0.1)';
+                dropArea.style.borderColor = 'var(--dark-beige)';
+                
+                if (e.dataTransfer.files.length) {
+                    document.getElementById('excel-import').files = e.dataTransfer.files;
+                    importFromExcel();
+                }
+            });
+        }
+        
+        // 導出為Excel
+        function exportToExcel() {
+            try {
+                // 顯示進度條
+                const progressBar = document.getElementById('import-progress');
+                const progressFill = progressBar.querySelector('.progress-fill');
+                progressBar.style.display = 'block';
+                progressFill.style.width = '0%';
+                
+                // 逐步更新進度
+                setTimeout(() => {
+                    progressFill.style.width = '30%';
+                    
+                    // 創建工作簿
+                    const wb = XLSX.utils.book_new();
+                    
+                    // 創建數據表
+                    const wsData = [];
+                    
+                    // 添加標題行
+                    wsData.push(['聖若瑟教區中學95周年科普與文創展 - 庫存管理報表']);
+                    wsData.push(['導出時間', new Date().toLocaleString('zh-Hant')]);
+                    wsData.push([]);
+                    
+                    // 添加表頭
+                    wsData.push(['編號', '產品', '初始數量', '13:00-14:30售出', '剩餘數量', '14:30-16:00售出', '剩餘數量', '16:00-17:00售出', '剩餘數量', '售出總數']);
+                    
+                    setTimeout(() => {
+                        progressFill.style.width = '50%';
+                        
+                        // 添加中/小學部數據
+                        wsData.push(['中/小學部商品']);
+                        currentData.primary.forEach(item => {
+                            const remaining1 = item.initial !== null ? item.initial - item.sales1 : '-';
+                            const remaining2 = item.initial !== null ? remaining1 - item.sales2 : '-';
+                            const remaining3 = item.initial !== null ? remaining2 - item.sales3 : '-';
+                            const totalSales = item.sales1 + item.sales2 + item.sales3;
+                            
+                            wsData.push([
+                                item.id + '.',
+                                item.name,
+                                item.initial !== null ? item.initial : '-',
+                                item.sales1,
+                                remaining1,
+                                item.sales2,
+                                remaining2,
+                                item.sales3,
+                                remaining3,
+                                totalSales
+                            ]);
+                        });
+                        
+                        wsData.push([]);
+                        
+                        setTimeout(() => {
+                            progressFill.style.width = '70%';
+                            
+                            // 添加幼稚園數據
+                            wsData.push(['幼稚園商品']);
+                            currentData.kindergarten.forEach(item => {
+                                const remaining1 = item.initial - item.sales1;
+                                const remaining2 = remaining1 - item.sales2;
+                                const remaining3 = remaining2 - item.sales3;
+                                const totalSales = item.sales1 + item.sales2 + item.sales3;
+                                
+                                wsData.push([
+                                    item.id + '.',
+                                    item.name,
+                                    item.initial,
+                                    item.sales1,
+                                    remaining1,
+                                    item.sales2,
+                                    remaining2,
+                                    item.sales3,
+                                    remaining3,
+                                    totalSales
+                                ]);
+                            });
+                            
+                            // 添加摘要
+                            wsData.push([]);
+                            wsData.push(['銷售摘要']);
+                            
+                            const allItems = [...currentData.primary, ...currentData.kindergarten];
+                            const totalInitial = allItems.reduce((sum, item) => sum + (item.initial || 0), 0);
+                            const totalSold = allItems.reduce((sum, item) => sum + item.sales1 + item.sales2 + item.sales3, 0);
+                            const totalRemaining = totalInitial - totalSold;
+                            
+                            wsData.push(['總初始庫存', totalInitial]);
+                            wsData.push(['總銷售量', totalSold]);
+                            wsData.push(['總剩餘庫存', totalRemaining]);
+                            wsData.push(['銷售率', `${(totalSold / totalInitial * 100).toFixed(2)}%`]);
+                            
+                            setTimeout(() => {
+                                progressFill.style.width = '90%';
+                                
+                                // 創建工作表
+                                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                                
+                                // 設置列寬
+                                const wscols = [
+                                    {wch: 6},  // 編號
+                                    {wch: 25}, // 產品
+                                    {wch: 12}, // 初始數量
+                                    {wch: 15}, // 時段1售出
+                                    {wch: 12}, // 剩餘1
+                                    {wch: 15}, // 時段2售出
+                                    {wch: 12}, // 剩餘2
+                                    {wch: 15}, // 時段3售出
+                                    {wch: 12}, // 剩餘3
+                                    {wch: 12}  // 售出總數
+                                ];
+                                ws['!cols'] = wscols;
+                                
+                                // 將工作表添加到工作簿
+                                XLSX.utils.book_append_sheet(wb, ws, '庫存報表');
+                                
+                                // 生成Excel文件並下載
+                                XLSX.writeFile(wb, `聖若瑟科普文創展庫存_${new Date().toISOString().slice(0,10)}.xlsx`);
+                                
+                                setTimeout(() => {
+                                    progressFill.style.width = '100%';
+                                    setTimeout(() => {
+                                        progressBar.style.display = 'none';
+                                    }, 500);
+                                    
+                                    showNotification('Excel文件已成功導出', 'success');
+                                }, 300);
+                            }, 300);
+                        }, 300);
+                    }, 300);
+                }, 300);
+            } catch (error) {
+                console.error('導出Excel時出錯:', error);
+                showNotification('導出失敗，請重試', 'error');
+                document.getElementById('import-progress').style.display = 'none';
+            }
+        }
+        
+        // 從Excel導入 - 修復版本
+        function importFromExcel() {
+            const fileInput = document.getElementById('excel-import');
+            if (!fileInput.files.length) {
+                showNotification('請先選擇文件', 'error');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            // 顯示進度條
+            const progressBar = document.getElementById('import-progress');
+            const progressFill = progressBar.querySelector('.progress-fill');
+            progressBar.style.display = 'block';
+            progressFill.style.width = '10%';
+            
+            reader.onload = function(e) {
+                try {
+                    setTimeout(() => {
+                        progressFill.style.width = '30%';
+                        
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        
+                        // 獲取第一個工作表
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        
+                        // 將工作表轉換為JSON數據
+                        const sheetData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                        
+                        setTimeout(() => {
+                            progressFill.style.width = '50%';
+                            
+                            // 解析Excel數據並更新currentData
+                            parseExcelData(sheetData);
+                            
+                            setTimeout(() => {
+                                progressFill.style.width = '80%';
+                                
+                                // 更新表格顯示
+                                initTable();
+                                
+                                // 更新圖表
+                                updateCharts();
+                                
+                                setTimeout(() => {
+                                    progressFill.style.width = '100%';
+                                    setTimeout(() => {
+                                        progressBar.style.display = 'none';
+                                    }, 500);
+                                    
+                                    showNotification('Excel文件已成功導入，數據已更新', 'success');
+                                    document.getElementById('last-save-time').textContent = new Date().toLocaleString('zh-Hant');
+                                    
+                                    // 重置文件輸入
+                                    fileInput.value = '';
+                                }, 300);
+                            }, 300);
+                        }, 300);
+                    }, 300);
+                } catch (error) {
+                    console.error('導入Excel時出錯:', error);
+                    showNotification('導入失敗，請檢查文件格式', 'error');
+                    progressBar.style.display = 'none';
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // 解析Excel數據並更新currentData - 修復版本
+        function parseExcelData(sheetData) {
+            // 重置數據到初始狀態
+            currentData = JSON.parse(JSON.stringify(initialData));
+            
+            // 查找中/小學部和幼稚園的開始位置
+            let primaryStartIndex = -1;
+            let kindergartenStartIndex = -1;
+            
+            for (let i = 0; i < sheetData.length; i++) {
+                const row = sheetData[i];
+                if (Array.isArray(row) && row.length > 0) {
+                    const cellValue = String(row[0]).trim();
+                    if (cellValue === '中/小學部商品' || cellValue.includes('中/小學')) {
+                        primaryStartIndex = i + 1; // 數據從下一行開始
+                    } else if (cellValue === '幼稚園商品' || cellValue.includes('幼稚園')) {
+                        kindergartenStartIndex = i + 1; // 數據從下一行開始
+                    }
+                }
+            }
+            
+            // 如果找不到標題，嘗試其他方法
+            if (primaryStartIndex === -1) {
+                // 嘗試查找產品名稱
+                for (let i = 0; i < sheetData.length; i++) {
+                    const row = sheetData[i];
+                    if (Array.isArray(row) && row.length > 1) {
+                        const productName = String(row[1]).trim();
+                        if (productName === "文創羊") {
+                            primaryStartIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (kindergartenStartIndex === -1) {
+                // 嘗試查找產品名稱
+                for (let i = 0; i < sheetData.length; i++) {
+                    const row = sheetData[i];
+                    if (Array.isArray(row) && row.length > 1) {
+                        const productName = String(row[1]).trim();
+                        if (productName === "我是主的羊毛公仔") {
+                            kindergartenStartIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // 解析中/小學部數據 - 修復版本
+            if (primaryStartIndex !== -1) {
+                for (let i = 0; i < currentData.primary.length; i++) {
+                    const dataRowIndex = primaryStartIndex + i;
+                    if (dataRowIndex < sheetData.length) {
+                        const row = sheetData[dataRowIndex];
+                        if (Array.isArray(row) && row.length >= 10) {
+                            // 直接從特定列讀取銷售數據（索引3、5、7對應銷售數據）
+                            // 注意：不再使用fallback邏輯來避免讀取剩餘庫存
+                            const sales1 = parseCellValue(row[3]); // 第4列：13:00-14:30售出
+                            const sales2 = parseCellValue(row[5]); // 第6列：14:30-16:00售出
+                            const sales3 = parseCellValue(row[7]); // 第8列：16:00-17:00售出
+                            
+                            // 如果銷售數據為空或無效，設置為0（而不是從其他列讀取）
+                            currentData.primary[i].sales1 = sales1;
+                            currentData.primary[i].sales2 = sales2;
+                            currentData.primary[i].sales3 = sales3;
+                        }
+                    }
+                }
+            }
+            
+            // 解析幼稚園數據 - 修復版本
+            if (kindergartenStartIndex !== -1) {
+                for (let i = 0; i < currentData.kindergarten.length; i++) {
+                    const dataRowIndex = kindergartenStartIndex + i;
+                    if (dataRowIndex < sheetData.length) {
+                        const row = sheetData[dataRowIndex];
+                        if (Array.isArray(row) && row.length >= 10) {
+                            // 直接從特定列讀取銷售數據（索引3、5、7對應銷售數據）
+                            // 注意：不再使用fallback邏輯來避免讀取剩餘庫存
+                            const sales1 = parseCellValue(row[3]); // 第4列：13:00-14:30售出
+                            const sales2 = parseCellValue(row[5]); // 第6列：14:30-16:00售出
+                            const sales3 = parseCellValue(row[7]); // 第8列：16:00-17:00售出
+                            
+                            // 如果銷售數據為空或無效，設置為0（而不是從其他列讀取）
+                            currentData.kindergarten[i].sales1 = sales1;
+                            currentData.kindergarten[i].sales2 = sales2;
+                            currentData.kindergarten[i].sales3 = sales3;
+                        }
+                    }
+                }
+            }
+            
+            // 如果以上方法都失敗，嘗試通用解析方法
+            if (primaryStartIndex === -1 && kindergartenStartIndex === -1) {
+                parseExcelDataGeneric(sheetData);
+            }
+        }
+        
+        // 解析單元格值 - 修復版本
+        function parseCellValue(value) {
+            if (value === undefined || value === null || value === '' || value === '-') {
+                return 0; // 明確處理空值、null、空字符串和破折號
+            }
+            
+            // 嘗試解析為數字
+            const num = Number(value);
+            
+            // 檢查是否為有效數字且非負數
+            if (isNaN(num) || num < 0) {
+                return 0; // 無效值設為0
+            }
+            
+            return num;
+        }
+        
+        // 通用Excel數據解析方法 - 修復版本
+        function parseExcelDataGeneric(sheetData) {
+            // 遍歷所有行，查找產品名稱和銷售數據
+            for (let i = 0; i < sheetData.length; i++) {
+                const row = sheetData[i];
+                if (!Array.isArray(row) || row.length < 2) continue;
+                
+                // 獲取產品名稱
+                const productName = String(row[1]).trim();
+                if (!productName || productName === '產品') continue;
+                
+                // 在中/小學部數據中查找匹配的產品
+                let found = false;
+                
+                // 檢查中/小學部產品
+                for (let j = 0; j < currentData.primary.length; j++) {
+                    const item = currentData.primary[j];
+                    if (productName.includes(item.name) || item.name.includes(productName)) {
+                        // 只從銷售數據列讀取（索引3、5、7）
+                        const sales1 = parseCellValue(row[3]);
+                        const sales2 = parseCellValue(row[5]);
+                        const sales3 = parseCellValue(row[7]);
+                        
+                        // 只更新銷售數據，不嘗試其他列
+                        currentData.primary[j].sales1 = sales1;
+                        currentData.primary[j].sales2 = sales2;
+                        currentData.primary[j].sales3 = sales3;
+                        
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // 如果在中/小學部沒找到，檢查幼稚園產品
+                if (!found) {
+                    for (let j = 0; j < currentData.kindergarten.length; j++) {
+                        const item = currentData.kindergarten[j];
+                        if (productName.includes(item.name) || item.name.includes(productName)) {
+                            // 只從銷售數據列讀取（索引3、5、7）
+                            const sales1 = parseCellValue(row[3]);
+                            const sales2 = parseCellValue(row[5]);
+                            const sales3 = parseCellValue(row[7]);
+                            
+                            // 只更新銷售數據，不嘗試其他列
+                            currentData.kindergarten[j].sales1 = sales1;
+                            currentData.kindergarten[j].sales2 = sales2;
+                            currentData.kindergarten[j].sales3 = sales3;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 顯示通知
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            
+            // 設置顏色
+            if (type === 'success') {
+                notification.style.backgroundColor = 'var(--accent-green)';
+            } else if (type === 'error') {
+                notification.style.backgroundColor = 'var(--accent-red)';
+            } else {
+                notification.style.backgroundColor = 'var(--accent-blue)';
+            }
+            
+            // 顯示通知
+            notification.classList.add('show');
+            
+            // 3秒後隱藏
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
